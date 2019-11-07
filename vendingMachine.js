@@ -9,10 +9,10 @@ function askForSelection() {
 
 class VendingMachine {
 
-    constructor(vendingProducts, vendingMoney, userPaid, nominalValues) {
+    constructor(vendingProducts, vendingMoney, nominalValues) {
         this._productsStore = vendingProducts;
         this._moneyStore = vendingMoney;
-        this._paidMoney = userPaid;
+        this._paidMoney = {};
         this._nominalMapping = nominalValues;
     }
 
@@ -20,16 +20,22 @@ class VendingMachine {
         console.log(`Change = ${arrChange.join(',')}`);
     }
 
-    /* Calculate all the money given by user */
-    updateTotalPaidAmound(moneyId) {
-        this._paidMoney[moneyId] += 1;
-        this._paidMoney.total = Object.keys(this._paidMoney).reduce((total, key) => {
-            if (this._moneyStore[key] != null && this._moneyStore[key].hasOwnProperty('value')) {
-                return total +  (this._paidMoney[key] * this._moneyStore[key].value);
-            } else {
-                return total;
-            }
+    /* Calculates total amount */
+    calculateTotalAmount(vault) {
+        return Object.keys(vault).reduce((total, key) => {
+            let nominalValue = this._nominalMapping.find(element => {
+                return element.code === key;
+            });
+            return total +  (vault[key] * nominalValue.value / 100);
         }, 0);
+    }
+
+    /* Increments coins dropped by user */
+    addUserCoin(moneyId) {
+        if (!this._paidMoney[moneyId]) {
+            this._paidMoney[moneyId] = 0;
+        }
+        this._paidMoney[moneyId] += 1;
     }
 
     /* Resets user payment, i.e. does not take money from user */
@@ -54,7 +60,8 @@ class VendingMachine {
         this._nominalMapping.reverse().forEach(nominalObj => {
             if (totalDiffValue >= nominalObj.value) {
                 let coinsCount = Math.floor(totalDiffValue / nominalObj.value);
-                let aggregatedCoinCount = this._moneyStore[nominalObj.code].qty + this._paidMoney[nominalObj.code];
+                let userCoinCount = this._paidMoney[nominalObj.code] ? this._paidMoney[nominalObj.code] : 0;
+                let aggregatedCoinCount = this._moneyStore[nominalObj.code] + userCoinCount;
                 coinsCount = Math.min(coinsCount, aggregatedCoinCount);
                 if (coinsCount > 0) {
                     totalDiffValue = totalDiffValue - (coinsCount * nominalObj.value);
@@ -70,22 +77,16 @@ class VendingMachine {
     updateMoneyInventory(changeObj) {
         /* Decrement amount of returned coins */
         changeObj.forEach(element => {
-            this._moneyStore[element].qty = this._moneyStore[element].qty + this._paidMoney[element] - 1;
+            let userCoinCount = this._paidMoney[element] ? this._paidMoney[element] : 0;
+            this._moneyStore[element] = this._moneyStore[element] + userCoinCount - 1;
         });
         /* Increment amount of coins received by user */
         Object.keys(this._moneyStore).forEach(key => {
-            if (key !== 'total' && changeObj.indexOf(key) < 0) {
-                this._moneyStore[key].qty = this._moneyStore[key].qty + this._paidMoney[key];
+            let userCoinCount = this._paidMoney[key] ? this._paidMoney[key] : 0;
+            if (changeObj.indexOf(key) < 0) {
+                this._moneyStore[key] += userCoinCount;
             }
         })
-        /* Calculates total available money in store */
-        this._moneyStore.total = Object.keys(this._moneyStore).reduce((total, key) => {
-            if (this._moneyStore[key].hasOwnProperty('value')) {
-                return total +  (this._moneyStore[key].qty * this._moneyStore[key].value);
-            } else {
-                return total;
-            }
-        }, 0);
     }
 
     /* Decrements product stock level */
@@ -96,7 +97,7 @@ class VendingMachine {
     /* Processes user's selection, generates change, updates inventory */
     processOrder(slotId, product) {
         let changeObj = [];
-        let diff = (this._paidMoney.total - product.price) * 100;
+        let diff = (this.calculateTotalAmount(this._paidMoney) - product.price) * 100;
         /* Cannot return change less than 5c */
         if (diff >= this._nominalMapping[0].value) {
             changeObj = this.calculateChange(diff);
@@ -120,16 +121,15 @@ class VendingMachine {
         do {
             choice = (await askForSelection()).toLowerCase();
             if (this._moneyStore[choice] != null) {
-                this.updateTotalPaidAmound(choice);
-                console.log(`Tendered = ${this._paidMoney.total.toFixed(2)}\n`);
+                this.addUserCoin(choice);
+                console.log(`Tendered = ${this.calculateTotalAmount(this._paidMoney).toFixed(2)}\n`);
             }
             if (this._productsStore[choice] != null) {
                 let productObj = this._productsStore[choice];
                 if (productObj.qty < 1) {
-                    console.log('This product is not available. Please try again.')
-                    this.resetUserPayment();
-                } else if (productObj.price > this._paidMoney.total) {
-                    console.log('The amount paid is not enough. Please try again.');
+                    console.log('This product is not available. Please select another product or type exit.')
+                } else if (productObj.price > this.calculateTotalAmount(this._paidMoney)) {
+                    console.log('The amount paid is not enough. You need to add more coins or type exit.');
                 } else if (!this.processOrder(choice, productObj)) {
                     console.log('Not enough availability. Cannot return change.');
                     this.resetUserPayment();
