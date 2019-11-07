@@ -1,4 +1,8 @@
 let Messages = require('./messages');
+const readLine = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 function askForSelection() {
     return new Promise(resolve => readLine.question('Enter = ', response => resolve(response)));
@@ -20,12 +24,12 @@ class ConsoleProcessor {
         console.log(messages.actionsSlotMsg);
     }
 
-    async getUserInput() {
+    async getUserInput(vendindMachine) {
         let choice;
         do {
             choice = (await askForSelection()).toLowerCase();
-            if (this._moneyStore[choice] != null) {
-                this.updateTotalPaidAmound(choice);
+            if (vendindMachine.isCoin(choice)) {
+                this.updatePaidAmound(choice);
                 console.log(`Tendered = ${this._paidMoney.total.toFixed(2)}\n`);
             }
             if (this._productsStore[choice] != null) {

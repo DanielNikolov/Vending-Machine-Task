@@ -1,12 +1,3 @@
-const readLine = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-function askForSelection() {
-    return new Promise(resolve => readLine.question('Enter = ', response => resolve(response)));
-}
-
 class VendingMachine {
 
     constructor(vendingProducts, vendingMoney, userPaid, nominalValues) {
@@ -29,7 +20,7 @@ class VendingMachine {
     }
 
     /* Calculate all the money given by user */
-    updateTotalPaidAmound(moneyId) {
+    updatePaidAmound(moneyId) {
         this._paidMoney[moneyId] += 1;
         this._paidMoney.total = Object.keys(this._paidMoney).reduce((total, key) => {
             if (this._moneyStore[key] != null && this._moneyStore[key].hasOwnProperty('value')) {
@@ -129,7 +120,7 @@ class VendingMachine {
         do {
             choice = (await askForSelection()).toLowerCase();
             if (this._moneyStore[choice] != null) {
-                this.updateTotalPaidAmound(choice);
+                this.updatePaidAmound(choice);
                 console.log(`Tendered = ${this._paidMoney.total.toFixed(2)}\n`);
             }
             if (this._productsStore[choice] != null) {
