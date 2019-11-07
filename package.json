@@ -1,0 +1,20 @@
+{
+  "name": "Vending-Machine-Task",
+  "version": "1.0.0",
+  "description": "Vending Machine Test Task implemented using ES6 Task simulating vending machine and implemented using ES6 and pure NodeJS.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielNikolov/Vending-Machine-Task.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanielNikolov/Vending-Machine-Task/issues"
+  },
+  "homepage": "https://github.com/DanielNikolov/Vending-Machine-Task#readme"
+}
