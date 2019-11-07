@@ -1,5 +1,10 @@
 let config = require('./config.json');
-var VendingMachine = require('./vendingMachine');
+let ConsoleProcessor = require('./consoleProcessor');
+let VendingMachine = require('./vendingMachine');
 
-var vendingMachine = new VendingMachine(config.products, config.money, config.userPaid, config.nominalMapping);
-vendingMachine.displayWelcomeMsg();
+let vendingMachine = new VendingMachine(config.products, config.money, config.userPaid, config.nominalMapping);
+let consoleProcessor = new ConsoleProcessor();
+
+consoleProcessor.displayWelcomeMessage(vendingMachine.productsStore);
+//vendingMachine.displayWelcomeMsg();
+
