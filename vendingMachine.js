@@ -14,45 +14,18 @@ class VendingMachine {
         this._moneyStore = vendingMoney;
         this._paidMoney = userPaid;
         this._nominalMapping = nominalValues;
-        this._coins = ['$1', '$2', '50c', '20c', '10c', '5c'];
-        this._slots = [
-            'slot 1',
-            'slot 2',
-            'slot 3',
-            'slot 4',
-            'slot 5',
-            'slot 6',
-            'slot 7',
-            'slot 8',
-            'slot 9',
-            'slot 10',
-            'slot 11',
-            'slot 12',
-            'slot 13',
-            'slot 14',
-            'slot 15',
-            'slot 16',
-            'slot 17'
-        ];
     }
 
     isCoin(value) {
-        return this._coins.indexOf(value) > -1;
+        return this._moneyStore[value] !== null;
     }
 
     isSlot(value) {
-        return this._slots.indexOf(value) > -1;
+        return this._productsStore[value] !== null;
     }
 
     generateChangeMsg(arrChange) {
-        let coinIds = [];
-        arrChange.forEach(element => {
-            for (let i = 0; i < element.qty; i++) {
-                coinIds.push(element.code);
-            }
-        });
-
-        console.log(`Change = ${coinIds.join(',')}`);
+        console.log(`Change = ${arrChange.join(',')}`);
     }
 
     /* Calculate all the money given by user */
@@ -82,29 +55,19 @@ class VendingMachine {
         console.log(this._productsStore);
     }
 
-    /* Builds aggregated vault by coin type - vending cache and user's money */
-    getAggregatedMoneyStore() {
-        let aggregatedStore = {};
-        Object.keys(this._moneyStore).forEach(key => {
-            if (key !== 'total') {
-                aggregatedStore[key] = this._moneyStore[key].qty + this._paidMoney[key];
-            }
-        });
-        aggregatedStore.total = this._moneyStore.total + this._paidMoney.total;
-        return aggregatedStore;
-    }
-
     /* Builds array of all coins for the change or empty array */
-    calculateChange(diff, aggregatedMoneyStore) {
+    calculateChange(diff) {
         let change = [];
         let totalDiffValue = diff;
         this._nominalMapping.reverse().forEach(nominalObj => {
             if (totalDiffValue >= nominalObj.value) {
                 let coinsCount = Math.floor(totalDiffValue / nominalObj.value);
-                coinsCount = Math.min(coinsCount, aggregatedMoneyStore[nominalObj.code]);
+                let aggregatedCoinCount = this._moneyStore[nominalObj.code].qty + this._paidMoney[nominalObj.code];
+                coinsCount = Math.min(coinsCount, aggregatedCoinCount);
                 if (coinsCount > 0) {
                     totalDiffValue = totalDiffValue - (coinsCount * nominalObj.value);
-                    change.push({code: nominalObj.code, qty: coinsCount});
+                    let strCoinIds = (nominalObj.code + ',').repeat(coinsCount);
+                    change = change.concat(strCoinIds.substring(0, strCoinIds.length-1).split(','));
                 }
             }
         });
@@ -112,15 +75,18 @@ class VendingMachine {
     }
 
     /* Decrements number of coins due to change return and re-calculates total*/
-    updateMoneyInventory(changeObj, aggregatedMoneyStore) {
+    updateMoneyInventory(changeObj) {
+        /* Decrement amount of returned coins */
         changeObj.forEach(element => {
-            aggregatedMoneyStore[element.code] = aggregatedMoneyStore[element.code] - element.qty;
+            this._moneyStore[element].qty = this._moneyStore[element].qty + this._paidMoney[element] - 1;
         });
-        Object.keys(aggregatedMoneyStore).forEach(key => {
-            if (key !== 'total') {
-                this._moneyStore[key].qty = aggregatedMoneyStore[key];
+        /* Increment amount of coins received by user */
+        Object.keys(this._moneyStore).forEach(key => {
+            if (key !== 'total' && changeObj.indexOf(key) < 0) {
+                this._moneyStore[key].qty = this._moneyStore[key].qty + this._paidMoney[key];
             }
-        });
+        })
+        /* Calculates total available money in store */
         this._moneyStore.total = Object.keys(this._moneyStore).reduce((total, key) => {
             if (this._moneyStore[key].hasOwnProperty('value')) {
                 return total +  (this._moneyStore[key].qty * this._moneyStore[key].value);
@@ -137,15 +103,15 @@ class VendingMachine {
 
     /* Processes user's selection, generates change, updates inventory */
     processOrder(slotId, product) {
-        let aggregatedMoneyStore = this.getAggregatedMoneyStore();
+        //let aggregatedMoneyStore = this.getAggregatedMoneyStore();
         let changeObj = [];
         let diff = (this._paidMoney.total - product.price) * 100;
         /* Cannot return change less than 5c */
         if (diff >= this._nominalMapping[0].value) {
-            changeObj = this.calculateChange(diff, aggregatedMoneyStore);
+            changeObj = this.calculateChange(diff);
         }
         if (changeObj.length > 0) {
-            this.updateMoneyInventory(changeObj, aggregatedMoneyStore);
+            this.updateMoneyInventory(changeObj);
             this.updateProductInventory(slotId);
             this.resetUserPayment();
             console.log('Enjoy!');
