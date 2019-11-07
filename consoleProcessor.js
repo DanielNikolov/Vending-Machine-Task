@@ -1,51 +1,57 @@
+let config = require('./config.json');
+let VendingMachine = require('./vendingMachine');
 let Messages = require('./messages');
+
 const readLine = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-function askForSelection() {
-    return new Promise(resolve => readLine.question('Enter = ', response => resolve(response)));
-}
 
 class ConsoleProcessor {
 
-    displayWelcomeMessage(slots) {
-        let messages = new Messages();
-        console.log(messages.titleMessage);
-        console.log(messages.headerMessage);
-        Object.keys(slots).forEach(key => {
-            let slotObj = slots[key];
+    constructor() {
+        this._vendingMachine = new VendingMachine(config.products, config.money, config.nominalMapping);
+        this._messages = new Messages();
+    }
+
+    askForSelection() {
+        return new Promise(resolve => readLine.question(`${this._messages.enterSelectionMessage}`, response => resolve(response)));
+    }
+
+    displayWelcomeMessage() {
+        console.log(this._messages.titleMessage);
+        console.log(this._messages.headerMessage);
+        Object.keys(this._vendingMachine.productsStore).forEach(key => {
+            let slotObj = this._vendingMachine.productsStore[key];
             var slotId = key.replace(/^\w/, c => c.toUpperCase());
             console.log(`${slotId} - ${slotObj.qty} x ${slotObj.name} = ${slotObj.price.toFixed(2)}\n`);
         })
-        console.log(messages.coinsMessage);
-        console.log(messages.actionsCoinMessage);
-        console.log(messages.actionsSlotMsg);
+        console.log(this._messages.coinsMessage);
+        console.log(this._messages.actionsCoinMessage);
+        console.log(this._messages.actionsSlotMessage);
     }
 
-    async getUserInput(vendindMachine) {
+    async getUserInput() {
         let choice;
         do {
-            choice = (await askForSelection()).toLowerCase();
-            if (vendindMachine.isCoin(choice)) {
-                this.updatePaidAmound(choice);
-                console.log(`Tendered = ${this._paidMoney.total.toFixed(2)}\n`);
+            choice = (await this.askForSelection()).toLowerCase();
+            if (this._vendingMachine.isCoin(choice)) {
+                console.log(`${this._messages.tenderedMessage} ${this._vendingMachine.addUserCoin(choice).toFixed(2)}\n`);
             }
-            if (this._productsStore[choice] != null) {
-                let productObj = this._productsStore[choice];
-                if (productObj.qty < 1) {
-                    console.log('This product is not available. Please try again.')
-                    this.resetUserPayment();
-                } else if (productObj.price > this._paidMoney.total) {
-                    console.log('The amount paid is not enough. Please try again.');
-                } else if (!this.processOrder(choice, productObj)) {
-                    console.log('Not enough availability. Cannot return change.');
-                    this.resetUserPayment();
+            if (this._vendingMachine.isSlot(choice)) {
+                let result = this._vendingMachine.processSlotSelection(choice, this._messages);
+
+                if (result === this._vendingMachine.errorNotAvailable) {
+                    console.log(`${this._messages.outOfStockMessage}`);
+                } else if (result === this._vendingMachine.errorNotPaid) {
+                    console.log(`${this._messages.notPaidMessage}`);
+                } else if (result === this._vendingMachine.errorNoChange) {
+                    console.log(`${this._messages.noChangeMessage}`);
                 }
             }
             if (choice === 'inventory') {
-                this.getInventory();
+                this._vendingMachine.getInventory();
             }
         } while (choice !== 'exit');
     }
