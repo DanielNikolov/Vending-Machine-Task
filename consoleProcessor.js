@@ -38,8 +38,7 @@ class ConsoleProcessor {
             choice = (await this.askForSelection()).toLowerCase();
             if (this._vendingMachine.isCoin(choice)) {
                 console.log(`${this._messages.tenderedMessage} ${this._vendingMachine.addUserCoin(choice).toFixed(2)}\n`);
-            }
-            if (this._vendingMachine.isSlot(choice)) {
+            } else if (this._vendingMachine.isSlot(choice)) {
                 let result = this._vendingMachine.processSlotSelection(choice, this._messages);
 
                 if (result === this._vendingMachine.errorNotAvailable) {
@@ -49,9 +48,10 @@ class ConsoleProcessor {
                 } else if (result === this._vendingMachine.errorNoChange) {
                     console.log(`${this._messages.noChangeMessage}`);
                 }
-            }
-            if (choice === 'inventory') {
+            } else if (choice === 'inventory') {
                 this._vendingMachine.getInventory();
+            } else if (choice !== 'exit') {
+                console.log(`${this._messages.invalidChoiceMessage}`);
             }
         } while (choice !== 'exit');
     }

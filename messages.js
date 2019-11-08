@@ -13,6 +13,7 @@ class Messages {
         this._itemMessage = 'Item =';
         this._changeMessage = 'Change =';
         this._enterSelectionMessage = 'Enter = ';
+        this._invalidChoiceMessage = 'You have entered invalid option. Please try again.\n';
     }
 
     get titleMessage() {
@@ -65,6 +66,10 @@ class Messages {
 
     get enterSelectionMessage() {
         return this._enterSelectionMessage;
+    }
+
+    get invalidChoiceMessage() {
+        return this._invalidChoiceMessage;
     }
 }
 
