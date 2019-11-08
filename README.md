@@ -10,5 +10,6 @@ Requirements:
 
 In order to start the project you need to go to the project folder and type the following command:
 node main.js
+In order to run test cases, type the following command in project folder: jasmine
 
 Developer: Daniel Nikolov
