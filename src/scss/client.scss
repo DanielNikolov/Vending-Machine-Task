@@ -1,8 +1,14 @@
 @import "bootstrap/scss/bootstrap";
 
+.products {
+    border-left: 1px solid #ccc;
+}
+
 .product {
     height: 120px;
-    border: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
     background-color: #eee;
 
     @include media-breakpoint-down(md) {
@@ -19,11 +25,11 @@
     }
 
     @include media-breakpoint-down(xs) {
-        &:nth-of-type(even) {
-            border-left: none;
-        }
         &:nth-of-type(n+3) {
             border-top: none;
+        }
+        &:nth-of-type(2n+2) {
+            border-left: none;
         }
     }
 }
