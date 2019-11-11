@@ -4,8 +4,10 @@
   "description": "Vending Machine Test Task implemented using ES6 Task simulating vending machine and implemented using ES6 and pure NodeJS.",
   "main": "main.js",
   "scripts": {
+    "console": "node main",
     "test": "mocha",
-    "cover": "nyc --reporter=html mocha"
+    "cover": "nyc --reporter=html mocha",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -19,10 +21,21 @@
   },
   "homepage": "https://github.com/DanielNikolov/Vending-Machine-Task#readme",
   "devDependencies": {
-    "mocha": "^6.2.2"
+    "@babel/core": "^7.5.4",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "json-loader": "^0.5.7",
+    "mini-css-extract-plugin": "^0.8.0",
+    "mocha": "^6.2.2",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   },
   "dependencies": {
     "npm": "^6.13.0",
-    "nyc": "^14.1.1"
+    "nyc": "^14.1.1",
+    "bootstrap": "^4.3.1"
   }
 }

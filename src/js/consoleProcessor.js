@@ -1,4 +1,4 @@
-let config = require('./config.json');
+let config = require('./config.js');
 let VendingMachine = require('./vendingMachine');
 let Messages = require('./messages');
 

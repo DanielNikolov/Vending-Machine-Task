@@ -1,0 +1,29 @@
+@import "bootstrap/scss/bootstrap";
+
+.product {
+    height: 120px;
+    border: 1px solid #ccc;
+    background-color: #eee;
+
+    @include media-breakpoint-down(md) {
+        &:nth-of-type(n+2) {
+            border-left: none;
+        }
+        &:nth-of-type(n+4) {
+            border-top: none;
+        }
+        &:nth-of-type(3n+1) {
+            border-left: 1px solid #ccc;
+
+        }
+    }
+
+    @include media-breakpoint-down(xs) {
+        &:nth-of-type(even) {
+            border-left: none;
+        }
+        &:nth-of-type(n+3) {
+            border-top: none;
+        }
+    }
+}
