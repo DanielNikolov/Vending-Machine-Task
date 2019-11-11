@@ -1,4 +1,4 @@
 *.code-workspace
 node_modules/
-package-lock.json
 coverage/
+.nyc_output/
