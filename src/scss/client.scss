@@ -11,16 +11,13 @@
     border-right: 1px solid #ccc;
     background-color: #eee;
 
+    &:nth-of-type(n+5) {
+        border-top: none;
+    }
+
     @include media-breakpoint-down(md) {
-        &:nth-of-type(n+2) {
-            border-left: none;
-        }
         &:nth-of-type(n+4) {
             border-top: none;
-        }
-        &:nth-of-type(3n+1) {
-            border-left: 1px solid #ccc;
-
         }
     }
 
@@ -28,8 +25,9 @@
         &:nth-of-type(n+3) {
             border-top: none;
         }
-        &:nth-of-type(2n+2) {
-            border-left: none;
-        }
+    }
+
+    .product__name {
+        color: #000;
     }
 }

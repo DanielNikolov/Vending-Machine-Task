@@ -8,7 +8,8 @@ function loadProducts() {
         let productObj = window.vendingMachine.productsStore[key];
         let productDivStr = '<div class="product d-flex col-lg-3 col-sm-4 col-6">' +
             '<span class="product__name row col-12 justify-content-center align-items-center">' +
-            productObj.name + '</span></div>';
+            productObj.name + '</span>' +
+            '<span class="product__qty">' + productObj.qty + '</span></div>';
         $('.products').append($(productDivStr));
     });
 }
