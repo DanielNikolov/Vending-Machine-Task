@@ -1,3 +1,5 @@
+let assert = require('assert');
+
 const config = {
     products: {
         'slot 1': {
@@ -126,32 +128,35 @@ describe('VendingMachine', function () {
     });
 
     it('test - coins validation', () => {
-        expect(testMachine.isCoin('$4')).not.toBeDefined();
-        expect(testMachine.isCoin('5c')).toBeDefined();
+        assert(typeof testMachine.isCoin('$4') == 'undefined');
+        assert(typeof testMachine.isCoin('5c') != 'undefined');
     });
 
     it('test - slot choice validation', () => {
-        expect(testMachine.isSlot('ssdfdsf')).not.toBeDefined();
+        let slot = testMachine.isSlot('ssdfdsf');
+        assert(typeof slot == 'undefined');
     })
 
     it('test - coins insert', () => {
-        expect(testMachine.addUserCoin('5c')).toBeGreaterThan(0);
+        assert(testMachine.addUserCoin('5c') > 0);
     })
 
     it('test - not enough money', () => {
         testMachine.addUserCoin('5c');
-        expect(testMachine.processSlotSelection('slot 1', new Messages())).toBe(errorMessages.ERROR_NOT_PAID);
+        let processSlotResult = testMachine.processSlotSelection('slot 1', new Messages());
+        assert(processSlotResult === errorMessages.ERROR_NOT_PAID);
     })
 
     it('test - not available product', () => {
         testMachine.addUserCoin('5c');
-        expect(testMachine.processSlotSelection('slot 2', new Messages())).toBe(errorMessages.ERROR_OUT_OF_STOCK);
+        let processSlotResult = testMachine.processSlotSelection('slot 2', new Messages());
+        assert(processSlotResult === errorMessages.ERROR_OUT_OF_STOCK);
     })
 
     it('test - change returned', () => {
         testMachine.addUserCoin('$2');
         testMachine.addUserCoin('$2');
-        expect(testMachine.processSlotSelection('slot 6', new Messages())).toBe(errorMessages.STATUS_OK);
+        let processSlotResult = testMachine.processSlotSelection('slot 6', new Messages());
+        assert(processSlotResult === errorMessages.STATUS_OK);
     })
-
 })
