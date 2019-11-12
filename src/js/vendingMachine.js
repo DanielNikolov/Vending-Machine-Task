@@ -4,18 +4,17 @@ class VendingMachine {
         this._productsStore = vendingProducts;
         this._moneyStore = vendingMoney;
         this._paidMoney = {};
+        Object.keys(vendingMoney).forEach(key => {
+            this._paidMoney[key] = 0;
+        })
         this._nominalMapping = nominalValues;
-        this._errorOutOfStock = 'ERROR_OUT_OF_STOCK';
-        this._errorNotPaid = 'ERROR_NOT_PAID';
-        this._errorNoChange = 'ERROR_NO_CHANGE';
-        this._statusOK = 'OK';
     }
 
     isCoin(value) {
         return this._moneyStore[value];
     }
 
-    isSlot(value) {
+    getSlot(value) {
         return this._productsStore[value];
     }
 
@@ -103,8 +102,9 @@ class VendingMachine {
     }
 
     /* Processes user's selection, generates change, updates inventory */
-    processOrder(slotId, product, messages) {
+    processSlotSelection(slotId) {
         let changeObj = [];
+        let product = this._productsStore[slotId];
         let diff = (this.calculateTotalAmount(this._paidMoney) - product.price) * 100;
         let sortedNominalMapping = this.getNominalMappingArrayAsc();
         /* Cannot return change less than 5c */
@@ -114,49 +114,26 @@ class VendingMachine {
         if (changeObj.length > 0) {
             this.updateMoneyInventory(changeObj);
             this.updateProductInventory(slotId);
-            this.resetUserPayment();
-            console.log(`${messages.enjoyMessage}`);
-            console.log(`${messages.itemMessage} ${product.name}`);
-            console.log(`${messages.changeMessage} ${changeObj.join(',')}\n`);
-            return true;
         }
-        return false;
+        this.resetUserPayment();
+        return changeObj;
     }
 
-    processSlotSelection(slotId, messages) {
+    isProductPurchaseable(slotId) {
         let product = this._productsStore[slotId];
-        if (product.qty < 1) {
-            return this._errorOutOfStock;
-        }
-        if (product.price > this.calculateTotalAmount(this._paidMoney)) {
-            return this._errorNotPaid;
-        }
-        if (!this.processOrder(slotId, product, messages)) {
-            this.resetUserPayment();
-            return this._errorNoChange
-        }
-
-        return this._statusOK;
+        return (product.price < this.calculateTotalAmount(this._paidMoney));
     }
 
-    get errorNotAvailable() {
-        return this._errorOutOfStock;
-    }
-
-    get errorNotPaid() {
-        return this._errorNotPaid;
-    }
-
-    get statusOK() {
-        return this._statusOK;
-    }
-
-    get errorNoChange() {
-        return this._errorNoChange;
+    isProductAvailable(slotId) {
+        return (this._productsStore[slotId].qty > 0);
     }
 
     get productsStore() {
         return this._productsStore;
+    }
+
+    get moneyStore() {
+        return this._moneyStore;
     }
 }
 

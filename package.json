@@ -4,7 +4,7 @@
   "description": "Vending Machine Test Task implemented using ES6 Task simulating vending machine and implemented using ES6 and pure NodeJS.",
   "main": "main.js",
   "scripts": {
-    "console": "node main",
+    "console": "node ./src/js/main",
     "test": "mocha",
     "cover": "nyc --reporter=html mocha",
     "build": "webpack"

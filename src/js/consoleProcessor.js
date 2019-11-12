@@ -36,17 +36,23 @@ class ConsoleProcessor {
         let choice;
         do {
             choice = (await this.askForSelection()).toLowerCase();
+            let product = this._vendingMachine.getSlot(choice);
             if (this._vendingMachine.isCoin(choice)) {
                 console.log(`${this._messages.tenderedMessage} ${this._vendingMachine.addUserCoin(choice).toFixed(2)}\n`);
-            } else if (this._vendingMachine.isSlot(choice)) {
-                let result = this._vendingMachine.processSlotSelection(choice, this._messages);
-
-                if (result === this._vendingMachine.errorNotAvailable) {
+            } else if (product) {
+                if (product.qty < 1) {
                     console.log(`${this._messages.outOfStockMessage}`);
-                } else if (result === this._vendingMachine.errorNotPaid) {
+                } else if (!this._vendingMachine.isProductPurchaseable(choice)) {
                     console.log(`${this._messages.notPaidMessage}`);
-                } else if (result === this._vendingMachine.errorNoChange) {
-                    console.log(`${this._messages.noChangeMessage}`);
+                } else {
+                    let result = this._vendingMachine.processSlotSelection(choice);
+                    if (result.length > 0) {
+                        console.log(`${this._messages.enjoyMessage}`);
+                        console.log(`${this._messages.itemMessage} ${product.name}`);
+                        console.log(`${this._messages.changeMessage} ${result.join(',')}\n`);
+                    } else {
+                        console.log(`${this._messages.noChangeMessage}`);
+                    }
                 }
             } else if (choice === 'inventory') {
                 this._vendingMachine.getInventory();

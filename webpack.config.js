@@ -4,7 +4,7 @@ module.exports = {
     mode: 'production',
     entry: ["./src/js/client.js", "./src/scss/client.scss"],
     output: {
-        filename: 'client.bundle.js'
+        filename: 'client.js'
     },
     plugins: [
         new MiniCssExtractPlugin({

@@ -133,7 +133,7 @@ describe('VendingMachine', function () {
     });
 
     it('test - slot choice validation', () => {
-        let slot = testMachine.isSlot('ssdfdsf');
+        let slot = testMachine.getSlot('ssdfdsf');
         assert(typeof slot == 'undefined');
     })
 
@@ -143,20 +143,19 @@ describe('VendingMachine', function () {
 
     it('test - not enough money', () => {
         testMachine.addUserCoin('5c');
-        let processSlotResult = testMachine.processSlotSelection('slot 1', new Messages());
-        assert(processSlotResult === errorMessages.ERROR_NOT_PAID);
+        let processSlotResult = testMachine.isProductPurchaseable('slot 1');
+        assert(processSlotResult === false);
     })
 
     it('test - not available product', () => {
-        testMachine.addUserCoin('5c');
-        let processSlotResult = testMachine.processSlotSelection('slot 2', new Messages());
-        assert(processSlotResult === errorMessages.ERROR_OUT_OF_STOCK);
+        let processSlotResult = testMachine.isProductAvailable('slot 2');
+        assert(processSlotResult === false);
     })
 
     it('test - change returned', () => {
         testMachine.addUserCoin('$2');
         testMachine.addUserCoin('$2');
-        let processSlotResult = testMachine.processSlotSelection('slot 6', new Messages());
-        assert(processSlotResult === errorMessages.STATUS_OK);
+        let processSlotResult = testMachine.processSlotSelection('slot 6');
+        assert(processSlotResult.length > 0);
     })
 })

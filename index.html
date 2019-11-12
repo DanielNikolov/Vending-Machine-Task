@@ -3,15 +3,19 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Vending Machine Simulator</title>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 		<link rel="stylesheet" href="dist/main.css">
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 	</head>
 	<body>
-		<div class="header" style="height: 120px;"></div>
 		<div class="container">
-			<div class="products row col-12 mr-0 ml-0 pr-0 pl-0"></div>
+			<div class="products row col-12 mt-5 mx-auto pr-0 pl-0"></div>
+			<div class="totals row col-12 mt-5 mx-auto pr-0 pl-0 no-gutters">
+				<span class="totals__paid col-12"><strong>Total Paid:</strong> $0.00</span>
+				<span class="totals__change col-12"><strong>Change:</strong></span>
+				<span class="totals__error col-12 alert-danger"></span>
+			</div>
+			<div class="moneypad row col-12 mt-3 mb-3 mx-auto pr-0 pl-0"></div>
 		</div>
-		<script src="dist/client.bundle.js"></script>
+		<script src="dist/client.js"></script>
 	</body>
 </html>
