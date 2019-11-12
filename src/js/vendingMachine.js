@@ -10,18 +10,18 @@ class VendingMachine {
         this._nominalMapping = nominalValues;
     }
 
-    isCoin(value) {
-        return this._moneyStore[value];
+    isCoin(coinId) {
+        return this._moneyStore.hasOwnProperty(coinId);
     }
 
-    getSlot(value) {
-        return this._productsStore[value];
+    getSlot(slotId) {
+        return this._productsStore[slotId];
     }
 
     getNominalMappingArrayAsc() {
         return Object.entries(this._nominalMapping).sort((a, b) => {
             if (a[1] < b[1]) {
-                return -1
+                return -1;
             } else if (a[1] > b[1]) {
                 return 1;
             }
@@ -31,26 +31,25 @@ class VendingMachine {
 
     /* Calculates total amount */
     calculateTotalAmount(vault) {
-        return Object.keys(vault).reduce((total, key) => {
-            return total +  (vault[key] * this._nominalMapping[key] / 100);
-        }, 0);
+        return Object.keys(vault).reduce((total, key) => (total +  (vault[key] * this._nominalMapping[key] / 100)), 0);
     }
 
     /* Increments coins dropped by user */
     addUserCoin(moneyId) {
-        if (!this._paidMoney[moneyId]) {
-            this._paidMoney[moneyId] = 0;
+        if (this.isCoin(moneyId)) {
+            if (!this._paidMoney[moneyId]) {
+                this._paidMoney[moneyId] = 0;
+            }
+            this._paidMoney[moneyId] += 1;
+            return this.calculateTotalAmount(this._paidMoney);
+        } else {
+            throw new Error('Invalid coin');
         }
-        this._paidMoney[moneyId] += 1;
-
-        return this.calculateTotalAmount(this._paidMoney);
     }
 
     /* Resets user payment, i.e. does not take money from user */
     resetUserPayment() {
-        Object.keys(this._paidMoney).forEach(key => {
-            this._paidMoney[key] = 0;
-        });
+        Object.keys(this._paidMoney).forEach(key => (this._paidMoney[key] = 0));
     }
 
     /* Displays debug information about products and money availability */
@@ -82,18 +81,15 @@ class VendingMachine {
 
     /* Decrements number of coins due to change return and re-calculates total*/
     updateMoneyInventory(changeObj) {
-        /* Decrement amount of returned coins */
-        changeObj.forEach(element => {
-            let userCoinCount = this._paidMoney[element];
-            this._moneyStore[element] = this._moneyStore[element] + userCoinCount - 1;
-        });
         /* Increment amount of coins received by user */
         Object.keys(this._moneyStore).forEach(key => {
-            let userCoinCount = this._paidMoney[key];
-            if (changeObj.indexOf(key) < 0) {
-                this._moneyStore[key] += userCoinCount;
-            }
+            this._moneyStore[key] += this._paidMoney[key];
         })
+        /* Decrement amount of returned coins */
+        changeObj.forEach(element => {
+            this._moneyStore[element] -= 1;
+        });
+
     }
 
     /* Decrements product stock level */
@@ -121,11 +117,12 @@ class VendingMachine {
 
     isProductPurchaseable(slotId) {
         let product = this._productsStore[slotId];
-        return (product.price < this.calculateTotalAmount(this._paidMoney));
+        return (typeof product !== 'undefined' && product.price < this.calculateTotalAmount(this._paidMoney));
     }
 
     isProductAvailable(slotId) {
-        return (this._productsStore[slotId].qty > 0);
+        let product = this._productsStore[slotId];
+        return (typeof product !== 'undefined' && product.qty > 0);
     }
 
     get productsStore() {

@@ -114,7 +114,6 @@ const errorMessages = {
 };
 
 let VendingMachine = require('../src/js/vendingMachine');
-let Messages = require('../src/js/messages');
 let testMachine = null;
 
 describe('VendingMachine', function () {
@@ -128,28 +127,34 @@ describe('VendingMachine', function () {
     });
 
     it('test - coins validation', () => {
-        assert(typeof testMachine.isCoin('$4') == 'undefined');
-        assert(typeof testMachine.isCoin('5c') != 'undefined');
+        assert(!testMachine.isCoin('$4'));
+        assert(testMachine.isCoin('5c'));
     });
 
     it('test - slot choice validation', () => {
         let slot = testMachine.getSlot('ssdfdsf');
-        assert(typeof slot == 'undefined');
+        assert.equal(typeof slot, 'undefined');
     })
 
     it('test - coins insert', () => {
         assert(testMachine.addUserCoin('5c') > 0);
+        try {
+            testMachine.addUserCoin('$4');
+        } catch (e) {
+            assert.equal(e.message, 'Invalid coin');
+        }
     })
 
     it('test - not enough money', () => {
         testMachine.addUserCoin('5c');
         let processSlotResult = testMachine.isProductPurchaseable('slot 1');
-        assert(processSlotResult === false);
+        assert.equal(processSlotResult, false);
     })
 
     it('test - not available product', () => {
         let processSlotResult = testMachine.isProductAvailable('slot 2');
-        assert(processSlotResult === false);
+        assert.equal(processSlotResult, false);
+        assert.equal(testMachine.isProductAvailable('slot A'), false);
     })
 
     it('test - change returned', () => {
@@ -157,5 +162,9 @@ describe('VendingMachine', function () {
         testMachine.addUserCoin('$2');
         let processSlotResult = testMachine.processSlotSelection('slot 6');
         assert(processSlotResult.length > 0);
+    })
+
+    it('test - not purchaseable product', () => {
+        assert.equal(testMachine.isProductPurchaseable('slot A'), false);
     })
 })
