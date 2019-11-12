@@ -84,7 +84,7 @@ const config = {
         },
         'slot 17': {
             name: 'Boost',
-            price: 1.50,
+            price: 1.00,
             qty: 1
         }
     },
@@ -165,6 +165,13 @@ describe('VendingMachine', function () {
     })
 
     it('test - not purchaseable product', () => {
+        assert.equal(testMachine.isProductPurchaseable('slot A'), false);
+    })
+
+    it('test - not purchaseable product', () => {
+        testMachine.addUserCoin('25c');
+        testMachine.addUserCoin('25c');
+        testMachine.addUserCoin('$2');
         assert.equal(testMachine.isProductPurchaseable('slot A'), false);
     })
 })

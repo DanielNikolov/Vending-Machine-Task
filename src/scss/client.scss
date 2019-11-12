@@ -43,7 +43,7 @@ $black: #000;
 .product {
     min-height: 7.5rem;
 
-    &.product--disabled {
+    &--disabled {
         background-color: $product-disabled-color;
 
         &:hover {
@@ -52,12 +52,15 @@ $black: #000;
         }
     }
 
-    .product__name {
+    &__name {
         color: $black;
     }
 
-    .product__qty,
-    .product__price {
+    &__qty {
+        font-size: 0.8125rem;
+    }
+
+    &__price {
         font-size: 0.8125rem;
     }
 }

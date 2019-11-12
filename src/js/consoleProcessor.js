@@ -55,7 +55,10 @@ class ConsoleProcessor {
                     }
                 }
             } else if (choice === 'inventory') {
-                this._vendingMachine.getInventory();
+                console.log('Cache Inventory:')
+                console.log(this._vendingMachine.moneyStore);
+                console.log('Products Inventory:')
+                console.log(this._vendingMachine.productsStore)
             } else if (choice !== 'exit') {
                 console.log(`${this._messages.invalidChoiceMessage}`);
             }

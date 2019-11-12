@@ -36,28 +36,16 @@ class VendingMachine {
 
     /* Increments coins dropped by user */
     addUserCoin(moneyId) {
-        if (this.isCoin(moneyId)) {
-            if (!this._paidMoney[moneyId]) {
-                this._paidMoney[moneyId] = 0;
-            }
-            this._paidMoney[moneyId] += 1;
-            return this.calculateTotalAmount(this._paidMoney);
-        } else {
+        if (!this.isCoin(moneyId)) {
             throw new Error('Invalid coin');
         }
+        this._paidMoney[moneyId] += 1;
+        return this.calculateTotalAmount(this._paidMoney);
     }
 
     /* Resets user payment, i.e. does not take money from user */
     resetUserPayment() {
         Object.keys(this._paidMoney).forEach(key => (this._paidMoney[key] = 0));
-    }
-
-    /* Displays debug information about products and money availability */
-    getInventory() {
-        console.log('Cache Inventory: ');
-        console.log(this._moneyStore);
-        console.log('Products Inventory: ');
-        console.log(this._productsStore);
     }
 
     /* Builds array of all coins for the change or empty array */
