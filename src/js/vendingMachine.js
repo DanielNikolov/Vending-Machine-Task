@@ -68,7 +68,7 @@ class VendingMachine {
         sortedNominalMapping.reverse().forEach(nominalObj => {
             if (totalDiffValue >= nominalObj[1]) {
                 let coinsCount = Math.floor(totalDiffValue / nominalObj[1]);
-                let userCoinCount = this._paidMoney[nominalObj[0]] ? this._paidMoney[nominalObj[0]] : 0;
+                let userCoinCount = this._paidMoney[nominalObj[0]];
                 let aggregatedCoinCount = this._moneyStore[nominalObj[0]] + userCoinCount;
                 coinsCount = Math.min(coinsCount, aggregatedCoinCount);
                 if (coinsCount > 0) {
@@ -84,12 +84,12 @@ class VendingMachine {
     updateMoneyInventory(changeObj) {
         /* Decrement amount of returned coins */
         changeObj.forEach(element => {
-            let userCoinCount = this._paidMoney[element] ? this._paidMoney[element] : 0;
+            let userCoinCount = this._paidMoney[element];
             this._moneyStore[element] = this._moneyStore[element] + userCoinCount - 1;
         });
         /* Increment amount of coins received by user */
         Object.keys(this._moneyStore).forEach(key => {
-            let userCoinCount = this._paidMoney[key] ? this._paidMoney[key] : 0;
+            let userCoinCount = this._paidMoney[key];
             if (changeObj.indexOf(key) < 0) {
                 this._moneyStore[key] += userCoinCount;
             }
