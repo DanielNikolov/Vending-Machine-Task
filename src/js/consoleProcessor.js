@@ -16,8 +16,7 @@ class ConsoleProcessor {
     }
 
     displayWelcomeMessage() {
-        console.log(this._messages.titleMessage);
-        console.log(this._messages.headerMessage);
+        console.log([this._messages.titleMessage, this._messages.headerMessage].join('\n'));
         Object.keys(this._vendingMachine.productsStore).forEach(key => {
             let slotObj = this._vendingMachine.productsStore[key];
             var slotId = key.replace(/^\w/, c => c.toUpperCase());
@@ -30,7 +29,7 @@ class ConsoleProcessor {
         let choice;
         do {
             let askForSelection = () => {
-                return new Promise(resolve => readLine.question(`${this._messages.enterSelectionMessage}`, response => resolve(response)));
+                return new Promise(resolve => readLine.question(this._messages.enterSelectionMessage, response => resolve(response)));
             }
             choice = (await askForSelection()).toLowerCase();
             let product = this._vendingMachine.getSlot(choice);
@@ -38,15 +37,13 @@ class ConsoleProcessor {
                 console.log(`${this._messages.tenderedMessage} ${this._vendingMachine.addUserCoin(choice).toFixed(2)}\n`);
             } else if (product) {
                 if (product.qty < 1) {
-                    console.log(`${this._messages.outOfStockMessage}`);
+                    console.log(this._messages.outOfStockMessage);
                 } else if (!this._vendingMachine.isProductPurchaseable(choice)) {
-                    console.log(`${this._messages.notPaidMessage}`);
+                    console.log(this._messages.notPaidMessage);
                 } else {
                     let result = this._vendingMachine.processSlotSelection(choice);
                     if (result.length > 0) {
-                        console.log(this._messages.enjoyMessage);
-                        console.log(`${this._messages.itemMessage} ${product.name}`);
-                        console.log(`${this._messages.changeMessage} ${result.join(',')}\n`);
+                        console.log(`\n${this._messages.enjoyMessage}\n${this._messages.itemMessage} ${product.name}\n${this._messages.changeMessage} ${result.join(',')}\n`);
                     } else {
                         console.log(this._messages.noChangeMessage);
                     }

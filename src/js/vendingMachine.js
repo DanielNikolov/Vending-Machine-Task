@@ -18,17 +18,6 @@ class VendingMachine {
         return this._productsStore[slotId];
     }
 
-    getNominalMappingArrayAsc() {
-        return Object.entries(this._nominalMapping).sort((a, b) => {
-            if (a[1] < b[1]) {
-                return -1;
-            } else if (a[1] > b[1]) {
-                return 1;
-            }
-            return 0;
-        });
-    }
-
     /* Calculates total amount */
     calculateTotalAmount(vault) {
         return Object.keys(vault).reduce((total, key) => (total +  (vault[key] * this._nominalMapping[key] / 100)), 0);
@@ -89,8 +78,18 @@ class VendingMachine {
     processSlotSelection(slotId) {
         let changeObj = [];
         let product = this._productsStore[slotId];
+        let sortNominalMappingAsc = (mapping) => {
+            return Object.entries(mapping).sort((a, b) => {
+                if (a[1] < b[1]) {
+                    return -1;
+                } else if (a[1] > b[1]) {
+                    return 1;
+                }
+                return 0;
+            });
+        };
         let diff = (this.calculateTotalAmount(this._paidMoney) - product.price) * 100;
-        let sortedNominalMapping = this.getNominalMappingArrayAsc();
+        let sortedNominalMapping = sortNominalMappingAsc(this._nominalMapping);
         /* Cannot return change less than 5c */
         if (diff >= sortedNominalMapping[0][1]) {
             changeObj = this.calculateChange(diff, sortedNominalMapping);
