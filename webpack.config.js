@@ -1,69 +1,44 @@
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require("path");
 
 module.exports = {
-    mode: 'production',
     entry: ["./src/js/client.js", "./src/scss/client.scss"],
     output: {
-        filename: 'client.js'
+        path: path.resolve(__dirname, 'dist'),
+        filename: "js/client.js"
     },
-    plugins: [
-        new MiniCssExtractPlugin({
-            filename: '[name].css',
-            chunkFilename: '[id].css'
-        })
-    ],
     module: {
         rules: [
             {
-                test: /\.module\.s(a|c)ss$/,
-                loader: [
-                    MiniCssExtractPlugin.loader,
+                test: /\.scss$/,
+                use: [
                     {
-                        loader: 'css-loader',
+                        loader: 'file-loader',
                         options: {
-                            modules: true,
-                            sourceMap: false
+                            name: 'css/[name].css',
                         }
                     },
                     {
-                        loader: 'sass-loader',
-                        options: {
-                            sourceMap: false
-                        }
-                    }
-                ]
-            },
-            {
-                test: /\.s(a|c)ss$/,
-                exclude: /\.module.(s(a|c)ss)$/,
-                loader: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
+                        loader: 'extract-loader'
+                    },
                     {
-                        loader: 'sass-loader',
-                        options: {
-                            sourceMap: false
-                        }
+                        loader: 'css-loader?-url'
+                    },
+                    {
+                        loader: 'sass-loader'
                     }
                 ]
             },
             {
                 test: /\.js?/,
                 exclude: [
-                    '/test/',
-                    '/node_modules/'
+                    "/test/",
+                    "/node_modules/"
                 ],
-                use: {
-                    loader: 'babel-loader'
-                }
-            },
-            {
-                test: /\.json$/,
-                loader: 'json-loader'
+                use: ["babel-loader"]
             }
         ]
     },
     resolve: {
-        extensions: ['.js', '.scss']
+        extensions: [".js", ".scss"]
     }
 }
