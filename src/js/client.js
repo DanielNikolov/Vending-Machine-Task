@@ -42,8 +42,8 @@ function loadMoneyOptions() {
     $('.moneypad').append($resetButton);
 }
 
-function initProductEvents() {
-    $('.product:not(.product--disabled)').click(function () {
+function initEvents() {
+    $(document).on('click', '.product:not(.product--disabled)', function () {
         if (!window.vendingMachine.isProductPurchaseable($(this).data('slotid'))) {
             $('.totals__error').html('Not enough money to buy selected product');
         } else {
@@ -55,14 +55,11 @@ function initProductEvents() {
                 $('.totals__error').html('');
                 $('.totals__change').html('<strong>Change:</strong> ' + processResult.join(', '));
                 loadProducts();
-                initProductEvents();
             }
             $('.totals__paid').html('<strong>Total Paid:</strong> $0.00');
         }
     });
-}
 
-function initMoneyPadEvents() {
     $('.coin:not(.reset)').click(function () {
         let totalPaid = window.vendingMachine.addUserCoin($(this).data('coinid')).toFixed(2);
         $('.totals__paid').html('<strong>Total Paid:</strong> $' + totalPaid);
@@ -79,6 +76,5 @@ function initMoneyPadEvents() {
 $(document).ready(() => {
     loadProducts();
     loadMoneyOptions();
-    initProductEvents();
-    initMoneyPadEvents();
+    initEvents();
 })
