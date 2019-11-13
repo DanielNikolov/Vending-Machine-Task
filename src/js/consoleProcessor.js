@@ -27,10 +27,10 @@ class ConsoleProcessor {
 
     async getUserInput() {
         let choice;
+        let askForSelection = () => {
+            return new Promise(resolve => readLine.question(this._messages.enterSelectionMessage, response => resolve(response)));
+        }
         do {
-            let askForSelection = () => {
-                return new Promise(resolve => readLine.question(this._messages.enterSelectionMessage, response => resolve(response)));
-            }
             choice = (await askForSelection()).toLowerCase();
             let product = this._vendingMachine.getSlot(choice);
             if (this._vendingMachine.isCoin(choice)) {
