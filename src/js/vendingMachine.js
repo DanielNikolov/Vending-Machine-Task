@@ -1,3 +1,8 @@
+/* Calculates total amount */
+function calculateTotalAmount(vault, mapping) {
+    return Object.keys(vault).reduce((total, key) => (total +  (vault[key] * mapping[key] / 100)), 0);
+}
+
 class VendingMachine {
 
     constructor(vendingProducts, vendingMoney, nominalValues) {
@@ -18,18 +23,13 @@ class VendingMachine {
         return this._productsStore[slotId];
     }
 
-    /* Calculates total amount */
-    calculateTotalAmount(vault) {
-        return Object.keys(vault).reduce((total, key) => (total +  (vault[key] * this._nominalMapping[key] / 100)), 0);
-    }
-
     /* Increments coins dropped by user */
     addUserCoin(moneyId) {
         if (!this.isCoin(moneyId)) {
             throw new Error('Invalid coin');
         }
         this._paidMoney[moneyId] += 1;
-        return this.calculateTotalAmount(this._paidMoney);
+        return calculateTotalAmount(this._paidMoney, this._nominalMapping);
     }
 
     /* Resets user payment, i.e. does not take money from user */
@@ -88,7 +88,7 @@ class VendingMachine {
                 return 0;
             });
         };
-        let diff = (this.calculateTotalAmount(this._paidMoney) - product.price) * 100;
+        let diff = (calculateTotalAmount(this._paidMoney, this._nominalMapping) - product.price) * 100;
         let sortedNominalMapping = sortNominalMappingAsc(this._nominalMapping);
         /* Cannot return change less than 5c */
         if (diff >= sortedNominalMapping[0][1]) {
@@ -104,7 +104,7 @@ class VendingMachine {
 
     isProductPurchaseable(slotId) {
         let product = this._productsStore[slotId];
-        return (typeof product !== 'undefined' && product.price < this.calculateTotalAmount(this._paidMoney));
+        return (typeof product !== 'undefined' && product.price < calculateTotalAmount(this._paidMoney, this._nominalMapping));
     }
 
     isProductAvailable(slotId) {
