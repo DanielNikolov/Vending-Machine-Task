@@ -16,13 +16,13 @@ class ConsoleProcessor {
     }
 
     displayWelcomeMessage() {
-        console.log([this._messages.titleMessage, this._messages.headerMessage].join('\n'));
+        console.log(`${this._messages.titleMessage}${this._messages.headerMessage}`);
         Object.keys(this._vendingMachine.productsStore).forEach(key => {
             let slotObj = this._vendingMachine.productsStore[key];
             var slotId = key.replace(/^\w/, c => c.toUpperCase());
             console.log(`${slotId} - ${slotObj.qty} x ${slotObj.name} = ${slotObj.price.toFixed(2)}\n`);
         })
-        console.log([this._messages.coinsMessage, this._messages.actionsCoinMessage, this._messages.actionsSlotMessage].join('\n'));
+        console.log(`${this._messages.coinsMessage}${this._messages.actionsCoinMessage}${this._messages.actionsSlotMessage}`);
     }
 
     async getUserInput() {
@@ -43,7 +43,7 @@ class ConsoleProcessor {
                 } else {
                     let result = this._vendingMachine.processSlotSelection(choice);
                     if (result.length > 0) {
-                        console.log(`\n${this._messages.enjoyMessage}\n${this._messages.itemMessage} ${product.name}\n${this._messages.changeMessage} ${result.join(',')}\n`);
+                        console.log(`\n${this._messages.enjoyMessage}${this._messages.itemMessage} ${product.name}\n${this._messages.changeMessage} ${result.join(',')}\n`);
                     } else {
                         console.log(this._messages.noChangeMessage);
                     }
