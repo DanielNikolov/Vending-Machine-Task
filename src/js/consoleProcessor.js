@@ -1,16 +1,13 @@
-let config = require('./config.js');
-let VendingMachine = require('./vendingMachine');
-let Messages = require('./messages');
-
-const readLine = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+import readline from 'readline';
+import Config from './config.js';
+import VendingMachine from './vendingMachine';
+import Messages from './messages';
 
 
-class ConsoleProcessor {
+export default class ConsoleProcessor {
 
     constructor() {
+        let config = new Config();
         this._vendingMachine = new VendingMachine(config.products, config.money, config.nominalMapping);
         this._messages = new Messages();
     }
@@ -27,6 +24,10 @@ class ConsoleProcessor {
 
     async getUserInput() {
         let choice;
+        const readLine = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
         let askForSelection = () => {
             return new Promise(resolve => readLine.question(this._messages.enterSelectionMessage, response => resolve(response)));
         }
@@ -57,6 +58,7 @@ class ConsoleProcessor {
                 console.log(`${this._messages.invalidChoiceMessage}`);
             }
         } while (choice !== 'exit');
+        readLine.close();
     }
 }
 
