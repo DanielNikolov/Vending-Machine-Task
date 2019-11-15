@@ -106,14 +106,7 @@ const config = {
     }
 };
 
-const errorMessages = {
-    ERROR_OUT_OF_STOCK: 'ERROR_OUT_OF_STOCK',
-    ERROR_NOT_PAID: 'ERROR_NOT_PAID',
-    ERROR_NO_CHANGE: 'ERROR_NO_CHANGE',
-    STATUS_OK: 'OK'
-};
-
-let VendingMachine = require('../src/js/vendingMachine');
+import VendingMachine from '../src/js/vendingMachine';
 let testMachine = null;
 
 describe('VendingMachine', function () {

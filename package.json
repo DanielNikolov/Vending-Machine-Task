@@ -2,12 +2,12 @@
   "name": "Vending-Machine-Task",
   "version": "1.0.0",
   "description": "Vending Machine Test Task implemented using ES6 Task simulating vending machine and implemented using ES6 and pure NodeJS.",
-  "main": "main.js",
   "scripts": {
-    "console": "node ./src/js/main",
-    "test": "mocha",
-    "cover": "nyc --reporter=html mocha",
-    "build": "webpack"
+    "console": "node -r esm src/js/main",
+    "test": "mocha --require esm",
+    "cover": "nyc --reporter=html mocha --require esm",
+    "build": "webpack",
+    "build2": "babel src --out-dir ./dist --source-maps"
   },
   "repository": {
     "type": "git",
@@ -24,10 +24,12 @@
     "@babel/core": "^7.5.4",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.2.0",
+    "esm": "^3.2.25",
     "extract-loader": "^3.1.0",
     "file-loader": "^4.2.0",
     "mocha": "^6.2.2",
     "node-sass": "^4.13.0",
+    "readline": "^1.3.0",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
     "webpack": "^4.41.2",

@@ -3,7 +3,7 @@ function calculateTotalAmount(vault, mapping) {
     return Object.keys(vault).reduce((total, key) => (total +  (vault[key] * mapping[key] / 100)), 0);
 }
 
-class VendingMachine {
+export default class VendingMachine {
 
     constructor(vendingProducts, vendingMoney, nominalValues) {
         this._productsStore = vendingProducts;
@@ -120,5 +120,3 @@ class VendingMachine {
         return this._moneyStore;
     }
 }
-
-module.exports = VendingMachine;

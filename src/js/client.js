@@ -1,5 +1,6 @@
-let config = require('./config.js');
-let VendingMachine = require('./vendingMachine');
+import Config from './config.js';
+import VendingMachine from './vendingMachine';
+const config = new Config();
 
 window.vendingMachine = new VendingMachine(config.products, config.money, config.nominalMapping);
 
