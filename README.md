@@ -5,7 +5,6 @@ Task simulating vending machine and implemented using ES6 and pure NodeJS.
 Requirements:
 - Node JS installed and readline module. Recommended version of NodeJS: v8.x.x or newer
   NodeJS installation: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
-- Readline installation: npm install readline.
 - Install Mocha: npm install mocha -g
 - Install nyc (replacer of Istanbul): npm install nyc -g
 - In project folder run: npm install
