@@ -36,7 +36,7 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "npm": "^6.13.0",
+    "npm": "^6.14.6",
     "nyc": "^14.1.1",
     "bootstrap": "^4.3.1"
   }
